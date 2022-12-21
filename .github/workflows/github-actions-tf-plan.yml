@@ -8,6 +8,8 @@ jobs:
     name: Create terraform plan         
     permissions:
       pull-requests: write
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v3
       - uses: hashicorp/setup-terraform@v2
@@ -19,6 +21,13 @@ jobs:
         run: terraform fmt -check
         continue-on-error: true
 
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::629239571689:role/GithubActionsOIDCRole
+          role-session-name: samplerolesession
+          aws-region: us-east-1
+      
       - name: Terraform Init
         id: init
         run: terraform init
