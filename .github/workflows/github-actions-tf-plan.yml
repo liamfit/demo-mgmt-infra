@@ -172,6 +172,32 @@ jobs:
           aws-region: us-east-1
 
       - name: Terraform apply
-        id: fmt
+        id: apply
         run: terraform apply -auto-approve -input=false tf_plan
         continue-on-error: true
+
+      - name: Comment on PR
+        uses: actions/github-script@v6
+        env:
+          PLAN: "terraform\n${{ steps.apply.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Apply 🎬\`${{ steps.apply.outcome }}\`
+            <details><summary>Show Plan</summary>
+            \`\`\`\n
+            ${process.env.APPLY}
+            \`\`\`
+            </details>
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      - name: Check terraform apply status
+        if: steps.apply.outcome == 'failure'
+        run: exit 1
+
