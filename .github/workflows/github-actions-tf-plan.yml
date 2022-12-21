@@ -112,7 +112,7 @@ jobs:
       - name: Zip terraform config files
         run: zip -r config.zip . -x ".git*" "backend*"
 
-      - name: Upload to S3
+      - name: Upload config to S3
         run: aws s3 cp config.zip s3://github-artifacts-20221221170928770700000001/${{github.event.number}}/
 
   apply:
@@ -141,9 +141,10 @@ jobs:
               content: "rocket",
             });
 
-      - name: Download tf_plan file
+      - name: Download config from S3
         run: aws s3 cp s3://github-artifacts-20221221170928770700000001/${{github.event.issue.number}}/config.zip .
 
+      - name: Extract terraform config files
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
