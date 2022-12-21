@@ -1,9 +1,9 @@
 name: Terraform plan
 
 on: 
-  - [pull_request]
-  - issue_comment:
-      type: [created]
+  [pull_request]
+  issue_comment:
+    type: [created]
 
 jobs:
   plan:
@@ -117,7 +117,7 @@ jobs:
           retention-days: 1
   apply:
     name: Terraform apply
-    if: github.event_type == 'issue_comment'
+    if: github.event_type == 'issue_comment' && github.event.issue.pull_request
     runs-on: ubuntu-latest    
     permissions:
       pull-requests: write
