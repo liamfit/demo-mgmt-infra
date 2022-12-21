@@ -1,6 +1,10 @@
 name: Terraform plan
 
-on: [pull_request, issue_comment]
+on: 
+  pull_request:
+  issue_comment:
+    types:
+    - created
 
 jobs:
   plan:
@@ -121,6 +125,7 @@ jobs:
           retention-days: 1
   apply:
     name: Terraform apply
+    if: ${{ github.event.issue.pull_request }}
     runs-on: ubuntu-latest    
     permissions:
       pull-requests: write
