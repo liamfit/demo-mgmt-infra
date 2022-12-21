@@ -15,7 +15,7 @@ jobs:
       contents: read
     steps:
       - name: Echo context
-        run: ${{ toJSON(github) }}
+        run: echo ${{ toJSON(github) }}
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -130,4 +130,4 @@ jobs:
       contents: read
     steps:
       - name: Echo context
-        run: ${{ toJSON(github) }}
+        run: echo ${{ toJSON(github) }}
