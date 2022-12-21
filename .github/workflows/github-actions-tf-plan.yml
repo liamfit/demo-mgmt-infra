@@ -1,10 +1,6 @@
 name: Terraform plan
 
-on: 
-  pull_request:
-  issue_comment:
-    types:
-    - created
+on: [pull_request, issue_comment]
 
 jobs:
   plan:
