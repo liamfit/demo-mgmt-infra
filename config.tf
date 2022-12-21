@@ -12,14 +12,9 @@ terraform {
     encrypt        = true
     dynamodb_table = "terraform-state"
     bucket         = "terraform-state-20221220164019831100000001"
-    role_arn       = "arn:aws:iam::629239571689:role/OrganizationAccountAccessRole"
   }
 }
 
 provider "aws" {
   region = var.aws_default_region
-
-  assume_role {
-    role_arn = "arn:aws:iam::${var.aws_account_id}:role/${var.aws_deployment_role}"
-  }
 }
