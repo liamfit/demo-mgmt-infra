@@ -28,20 +28,21 @@ jobs:
           role-session-name: samplerolesession
           aws-region: us-east-1
       
-      - name: Terraform Init
+      - name: Terraform init
         id: init
         run: terraform init
 
-      - name: Terraform Validate
+      - name: Terraform validate
         id: validate
         run: terraform validate -no-color
 
-      - name: Terraform Plan
+      - name: Terraform plan
         id: plan
-        run: terraform plan -no-color
+        run: terraform plan -no-color -out "tf_plan" -input=false
         continue-on-error: true
 
-      - uses: actions/github-script@v6
+      - name: Comment on PR
+        uses: actions/github-script@v6
         if: github.event_name == 'pull_request'
         env:
           PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
@@ -98,3 +99,15 @@ jobs:
                 body: output
               })
             }
+
+      - name: Check terraform plan status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Upload terraform plan
+        uses: actions/upload-artifact@v2
+        with:
+          name: tf_plan
+          path: ./tf_plan
+          if-no-files-found: error
+          retention-days: 1
