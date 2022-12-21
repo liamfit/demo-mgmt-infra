@@ -113,7 +113,7 @@ jobs:
         run: zip -r config.zip . -x ".git*" "backend*"
 
       - name: Upload to S3
-        run: as s3 cp config.zip s3://github-artifacts-20221221170928770700000001/${{github.event.number}}/
+        run: aws s3 cp config.zip s3://github-artifacts-20221221170928770700000001/${{github.event.number}}/
 
   apply:
     name: Apply terraform plan
