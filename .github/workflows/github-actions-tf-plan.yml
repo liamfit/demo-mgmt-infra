@@ -3,7 +3,7 @@ name: Terraform plan
 on: 
   pull_request:
   issue_comment:
-    type: [created]
+    types: [created]
 
 jobs:
   plan:
