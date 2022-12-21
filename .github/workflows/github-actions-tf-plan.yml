@@ -14,7 +14,6 @@ jobs:
       id-token: write
       contents: read
     steps:
-    steps:
       - name: Echo context
         run: ${{ toJSON(github) }}
 
