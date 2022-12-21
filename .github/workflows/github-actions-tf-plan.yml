@@ -1,11 +1,17 @@
 name: Terraform plan
 
-on: [pull_request]
+on: 
+  - pull_request:
+     branches:
+       - main
+  - issue_comment:
+      type: [created]
 
 jobs:
   plan:
+    name: Create terraform plan  
+    if: github.event_type == 'pull_request'
     runs-on: ubuntu-latest
-    name: Create terraform plan         
     permissions:
       pull-requests: write
       id-token: write
@@ -112,13 +118,13 @@ jobs:
           if-no-files-found: error
           retention-days: 1
   apply:
-    runs-on: ubuntu-latest
     name: Terraform apply
+    if: github.event_type == 'issue_comment'
+    runs-on: ubuntu-latest    
     permissions:
       pull-requests: write
       id-token: write
       contents: read
-    if: github.event_name == 'issue_comment'
     steps:
-      - name: Echo something
-        run: echo github.event
+      - name: Echo context
+        run: ${{ toJSON(github) }}
