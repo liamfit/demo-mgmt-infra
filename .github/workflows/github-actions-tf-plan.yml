@@ -8,15 +8,21 @@ on:
 jobs:
   plan:
     name: Create terraform plan  
-    if: github.event_type == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@v3
-      - uses: hashicorp/setup-terraform@v2
+    steps:
+      - name: Echo context
+        run: ${{ toJSON(github) }}
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Terraform setup
+        uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.3.6
 
