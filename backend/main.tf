@@ -52,7 +52,29 @@ resource "aws_dynamodb_table" "terraform-state" {
   }
 }
 
-output "terraform_backend_bucket" {
+resource "aws_s3_bucket" "github_artifacts_bucket" {
+  bucket_prefix = "github-artifacts-"
+}
+
+resource "aws_s3_bucket_acl" "github_artifacts_bucket_acl" {
+  bucket = aws_s3_bucket.github_artifacts_bucket.id
+  acl    = "private"
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "github_artifacts_bucket_sse_config" {
+  bucket = aws_s3_bucket.github_artifacts_bucket.bucket
+
+  rule {
+    bucket_key_enabled = true
+  }
+}
+
+output "tf_state_bucket" {
   value = aws_s3_bucket.tf_state_bucket.bucket
   description = "Terraform state bucket"
+}
+
+output "github_artifacts_bucket" {
+  value = aws_s3_bucket.github_artifacts_bucket.bucket
+  description = "Github artifacts bucket"
 }

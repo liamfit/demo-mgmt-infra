@@ -109,15 +109,15 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
-      - name: Upload terraform plan
-        uses: actions/upload-artifact@v3
-        with:
-          name: tf_plan
-          path: ./tf_plan
-          if-no-files-found: error
-          retention-days: 1
+      - name: Zip terraform config files
+        run: zip -r config.zip . -x ".git*" "backend*"
+
+      - name: Upload config to S3
+        run: aws s3 cp config.zip s3://github-artifacts-20221221170928770700000001/${{github.event.number}}/
+
   apply:
     name: Apply terraform plan
+    needs: plan
     if: ${{ github.event.issue.pull_request && github.event.comment.body == 'terraform apply' && github.actor == 'liamfit' }}
     runs-on: ubuntu-latest    
     permissions:
@@ -128,24 +128,6 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.3.6
-
-      - name: Get PR SHA
-        id: sha
-        uses: actions/github-script@v4
-        with:
-          result-encoding: string
-          script: |
-            const { owner, repo, number } = context.issue;
-            const pr = await github.pulls.get({
-              owner,
-              repo,
-              pull_number: number,
-            });
-            return pr.data.head.sha
-
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ steps.sha.outputs.result }}
 
       - name: React to comment
         uses: actions/github-script@v4
@@ -159,11 +141,12 @@ jobs:
               content: "rocket",
             });
 
-      - name: Download tf_plan file
-        uses: actions/download-artifact@v3
-        with:
-          name: tf_plan
+      - name: Download config from S3
+        run: aws s3 cp s3://github-artifacts-20221221170928770700000001/${{github.event.issue.number}}/config.zip .
 
+      - name: Extract terraform config files
+        run: unzip config.zip
+        
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
