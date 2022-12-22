@@ -143,7 +143,7 @@ output "apigw_endpoint" {
   description = "API Gateway Endpoint"
 }
 
-# output "apigw_arn" {
-#   value       = aws_apigatewayv2_api.apigw_http_endpoint.arn
-#   description = "API Gateway ARN"
-# }
+output "apigw_arn" {
+  value       = aws_apigatewayv2_api.apigw_http_endpoint.arn
+  description = "API Gateway ARN"
+}
