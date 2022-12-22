@@ -117,7 +117,6 @@ jobs:
 
   apply:
     name: Apply terraform plan
-    needs: plan
     if: ${{ github.event.issue.pull_request && github.event.comment.body == 'terraform apply' && github.actor == 'liamfit' }}
     runs-on: ubuntu-latest    
     permissions:
