@@ -140,18 +140,18 @@ jobs:
               content: "rocket",
             });
 
-      - name: Download config from S3
-        run: aws s3 cp s3://github-artifacts-20221221170928770700000001/${{github.event.issue.number}}/config.zip .
-
-      - name: Extract terraform config files
-        run: unzip config.zip
-        
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: arn:aws:iam::629239571689:role/GithubActionsOIDCRole
           role-session-name: samplerolesession
           aws-region: us-east-1
+
+      - name: Download config from S3
+        run: aws s3 cp s3://github-artifacts-20221221170928770700000001/${{github.event.issue.number}}/config.zip .
+
+      - name: Extract terraform config files
+        run: unzip config.zip
 
       - name: Terraform apply
         id: apply
