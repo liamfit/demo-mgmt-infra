@@ -1,14 +1,14 @@
 variable "aws_account_id" {
   type    = string
-  default = "629239571689"
+  default = ""
 }
 
 variable "aws_default_region" {
   type    = string
-  default = "us-east-1"
+  default = ""
 }
 
 variable "aws_deployment_role" {
   type    = string
-  default = "OrganizationAccountAccessRole"
+  default = ""
 }
