@@ -30,13 +30,17 @@ jobs:
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::629239571689:role/GithubActionsOIDCRole
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_INFRA_ACCOUNT_ID }}:role/${{ secrets.AWS_INFRA_ACCOUNT_ROLE }}
           role-session-name: samplerolesession
-          aws-region: us-east-1
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
       
       - name: Terraform init
         id: init
-        run: terraform init
+        run: >
+          terraform init
+          -backend-config="region=${{ secrets.AWS_DEFAULT_REGION }}"
+          -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}"
+
 
       - name: Terraform validate
         id: validate
@@ -113,7 +117,7 @@ jobs:
         run: zip -r config.zip . -x ".git*" "backend*"
 
       - name: Upload config to S3
-        run: aws s3 cp config.zip s3://github-artifacts-20221221170928770700000001/${{github.event.number}}/
+        run: aws s3 cp config.zip s3://${{ secrets.GH_ARTIFACTS_BUCKET }}/${{github.event.number}}/
 
   apply:
     name: Apply terraform plan
@@ -143,15 +147,22 @@ jobs:
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::629239571689:role/GithubActionsOIDCRole
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_INFRA_ACCOUNT_ID }}:role/${{ secrets.AWS_INFRA_ACCOUNT_ROLE }}
           role-session-name: samplerolesession
-          aws-region: us-east-1
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: Download config from S3
-        run: aws s3 cp s3://github-artifacts-20221221170928770700000001/${{github.event.issue.number}}/config.zip .
+        run: aws s3 cp s3://${{ secrets.GH_ARTIFACTS_BUCKET }}/${{github.event.issue.number}}/config.zip .
 
       - name: Extract terraform config files
         run: unzip config.zip
+
+      - name: Terraform init
+        id: init
+        run: >
+          terraform init
+          -backend-config="region=${{ secrets.AWS_DEFAULT_REGION }}"
+          -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}"
 
       - name: Terraform apply
         id: apply
@@ -161,17 +172,16 @@ jobs:
       - name: Comment on PR
         uses: actions/github-script@v6
         env:
-          PLAN: "terraform\n${{ steps.apply.outputs.stdout }}"
+          APPLY: "terraform\n${{ steps.apply.outputs.stdout }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const output = `#### Terraform Apply 🎬\`${{ steps.apply.outcome }}\`
-            <details><summary>Show Plan</summary>
+            <details><summary>Show Result</summary>
             \`\`\`\n
             ${process.env.APPLY}
             \`\`\`
-            </details>
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+            </details>`;
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
