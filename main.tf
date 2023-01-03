@@ -88,7 +88,7 @@ resource "aws_lb_listener" "ecs_alb_listener" {
 
 # Create the ECS Cluster and Fargate launch type service in the private subnets
 resource "aws_ecs_cluster" "ecs_cluster" {
-  name = "ecs-cluster"
+  name = "demo-ecs-cluster"
 }
 
 # Create the VPC Link configured with the private subnets. Security groups are kept empty here, but can be configured as required.
