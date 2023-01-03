@@ -177,11 +177,15 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const output = `#### Terraform Apply 🎬\`${{ steps.apply.outcome }}\`
+
             <details><summary>Show Result</summary>
+            
             \`\`\`\n
             ${process.env.APPLY}
             \`\`\`
-            </details>`;
+
+            </details>
+            `;
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
