@@ -166,7 +166,7 @@ jobs:
 
       - name: Terraform apply
         id: apply
-        run: terraform apply -auto-approve -input=false tf_plan
+        run: terraform apply -auto-approve -no-color -input=false tf_plan
         continue-on-error: true
 
       - name: Comment on PR
