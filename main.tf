@@ -1,12 +1,12 @@
-# # ECR repository for application container images
-# resource "aws_ecr_repository" "app_container_repo" {
-#   name                 = var.application_repo
-#   image_tag_mutability = "MUTABLE"
+# ECR repository for application container images
+resource "aws_ecr_repository" "app_container_repo" {
+  name                 = var.application_repo
+  image_tag_mutability = "MUTABLE"
 
-#   image_scanning_configuration {
-#     scan_on_push = false
-#   }
-# }
+  image_scanning_configuration {
+    scan_on_push = false
+  }
+}
 
 # # Load balancer security group. CIDR and port ingress can be changed as required.
 # resource "aws_security_group" "lb_security_group" {
