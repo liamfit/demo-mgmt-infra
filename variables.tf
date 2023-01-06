@@ -1,6 +1,6 @@
 variable "application_repo" {
   type    = string
-  default = "liamfit/sample-app"
+  default = "sample-app"
 }
 
 variable "vpc_id" {
