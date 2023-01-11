@@ -10,7 +10,9 @@ module "oidc_github" {
   iam_role_name       = "Github-Actions-Role"
 
   github_repositories = [
-    "liamfit/terraform-core-infra"
+    "liamfit/terraform-core-infra",
+    "liamfit/terraform-workload1-infra",
+    "liamfit/sample-app"
   ]
 }
 
