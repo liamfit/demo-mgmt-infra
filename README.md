@@ -1,14 +1,37 @@
-# terraform-aws-infra
+# terraform-core-infra
 
-This repo contains terraform config and pipelines to create the aws infrastructure for public API Gateway endpoint linked to a private Application Load Balancer with an ECS Fargate cluster behind it.
+This repo contains terraform config and pipelines to manage the AWS core infrastructure.
 
-## How do I deploy to a new AWS account?
+## How do I bootstrap a new AWS account?
 
-There are some manual steps to set up the terraform backend config and connection from Github to AWS. You will need an AWS access key/secret key for a user that has permissions to assume a role that can create S3 buckets and DynamoDB tables.
+The bootstrap directory contains terraform config to create the S3 backend for storing Terraform remote state files and a DynamoDB table for state locking. This is deployed from your local machine so AWS credentials are required for the account you are deploying into. 
 
-1. Create a copy of `backend\variables.tf` locally called `backend\override.tf` and add the AWS account ID, region and IAM role to use with the terraform AWS provider
-2. Run `terraform init` and `terraform apply` from within the `backend\` directory. This will create S3 buckets for terraform remote state and Github artifacts and a DynamoDB table for terraform state locking
-3. Add the value of the output `github_artifacts_bucket` to repository secrets as `GH_ARTIFACTS_BUCKET`
+Steps are as follows:
+
+1. Comment out the backend config in `main.tf` like this:
+
+```
+  # backend "s3" {
+  #   key            = "terraform-core-infra/bootstrap/terraform.tfstate"
+  #   encrypt        = true
+  #   dynamodb_table = "terraform-state"
+  # }
+```
+ 
+2. Create a copy of `bootstrap\variables.tf` locally called `boostrap\override.tf` and add the region in which you want to create the resources
+3. Run `terraform init` and `terraform apply` from within the `bootstrap\` directory
 4. Add the value of the output `tf_state_bucket` to repository secrets as `TF_STATE_BUCKET`
-5. Configure Github as an OIDC identity provider in AWS (see [docs](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services))
-6. Add repositiory secrets for `AWS_DEFAULT_REGION`, `AWS_INFRA_ACCOUNT_ID` and `AWS_INFRA_ACCOUNT_ROLE` (this is the role you created for Github to assume in step 5)
+
+Next we need to migrate the local terraform state to the newly created state bucket:
+
+5. Uncomment the backend config in `main.tf`
+6. Run `terraform init` and enter the name of the newly created S3 bucket and AWS region when prompted
+7. Type `yes` to copy the existing state to the new backend
+
+Finally, we need to create the Github OIDC identity provider, an IAM role that Github Actions will assume when deploying the core infrastructure and an S3 bucket to store Github artifacts (e.g. terraform plans):
+
+8. Create a copy of `variables.tf` locally called `override.tf` and add the region in which you want to create the resources
+9. Run `terraform init` and enter the name of the terraform state bucket and AWS region when prompted
+10. Run `terraform apply` to create the core infrastructure
+11. Add the value of the output `github_artifacts_bucket` to repository secrets as `GH_ARTIFACTS_BUCKET`
+12. Add repositiory secrets for `AWS_REGION`, `AWS_ACCOUNT_ID` and `AWS_ROLE` (this will be `Github-Actions-Role` unless modified in `main.tf`)
