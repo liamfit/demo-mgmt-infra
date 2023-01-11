@@ -28,7 +28,7 @@ Next we need to migrate the local terraform state to the newly created state buc
 6. Run `terraform init` and enter the name of the newly created S3 bucket and AWS region when prompted
 7. Type `yes` to copy the existing state to the new backend
 
-Finally, we need to create the Github OIDC identity provider and an IAM role that Github Actions will assume when deploying the core infrastructure along with an S3 bucket to store Github artifacts (e.g. terraform plans):
+Finally, we need to create the Github OIDC identity provider, an IAM role that Github Actions will assume when deploying the core infrastructure and an S3 bucket to store Github artifacts (e.g. terraform plans):
 
 8. Create a copy of `variables.tf` locally called `override.tf` and add the region in which you want to create the resources
 9. Run `terraform init` and enter the name of the terraform state bucket and AWS region when prompted

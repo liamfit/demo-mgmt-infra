@@ -24,5 +24,4 @@ module "s3_bucket_github" {
   versioning = {
     enabled = true
   }
-
 }

@@ -18,28 +18,15 @@ provider "aws" {
   region = var.aws_region
 }
 
-resource "aws_s3_bucket" "tf_state_bucket" {
+module "s3_bucket_terraform_state" {
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "3.6.0"
+
   bucket_prefix = "terraform-state-"
-}
+  acl           = "private"
 
-resource "aws_s3_bucket_acl" "tf_state_bucket_acl" {
-  bucket = aws_s3_bucket.tf_state_bucket.id
-  acl    = "private"
-}
-
-resource "aws_s3_bucket_server_side_encryption_configuration" "tfstate_bucket_sse_config" {
-  bucket = aws_s3_bucket.tf_state_bucket.bucket
-
-  rule {
-    bucket_key_enabled = true
-  }
-}
-
-resource "aws_s3_bucket_versioning" "tfstate_bucket_versioning" {
-  bucket = aws_s3_bucket.tf_state_bucket.id
-  
-  versioning_configuration {
-    status = "Enabled"
+  versioning = {
+    enabled = true
   }
 }
 
