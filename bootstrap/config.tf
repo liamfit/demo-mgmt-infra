@@ -7,7 +7,7 @@ terraform {
   }
 
   backend "s3" {
-    key            = "demo-mgmt-infra/terraform.tfstate"
+    key            = "demo-mgmt-infra/bootstrap/terraform.tfstate"
     encrypt        = true
     dynamodb_table = "terraform-state"
   }
