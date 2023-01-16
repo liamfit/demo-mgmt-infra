@@ -1,4 +1,4 @@
-# terraform-core-infra
+# demo-mgmt-infra
 
 This repo contains terraform config and pipelines to manage the AWS management account infrastructure for a given project.
 
