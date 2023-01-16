@@ -14,7 +14,7 @@ module "s3_bucket_terraform_state" {
   }
 }
 
-resource "aws_dynamodb_table" "terraform-state" {
+resource "aws_dynamodb_table" "terraform_state" {
   name           = "terraform-state"
   read_capacity  = 20
   write_capacity = 20
