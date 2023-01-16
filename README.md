@@ -1,6 +1,6 @@
 # terraform-core-infra
 
-This repo contains terraform config and pipelines to manage the AWS core infrastructure.
+This repo contains terraform config and pipelines to manage the AWS management account infrastructure for a given project.
 
 ## How do I bootstrap a new AWS account?
 
