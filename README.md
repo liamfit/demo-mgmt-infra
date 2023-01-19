@@ -1,6 +1,11 @@
 # demo-mgmt-infra
 
-This repo contains terraform config and pipelines to manage the AWS management account infrastructure for a given project.
+This repo contains terraform config and pipelines to manage the AWS management account infrastructure for a given project. The minimum set of resources includes 
+- S3 buckets and DynamoDB table for Terraform remote state
+- S3 bucket for Github artifacts
+- OIDC identity provider and IAM Role for Github Actions
+
+![Management Infrastructure](mgmt-infra.png)
 
 ## How do I bootstrap a new AWS account?
 
